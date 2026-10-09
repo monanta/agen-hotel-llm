@@ -1,0 +1,10 @@
+{
+  "name": "agen-hotel-llm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prototipe customer service Hotel Kencana berbasis multiagen dengan LLM (Claude API)",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}
