@@ -1,6 +1,6 @@
 # Agen Hotel LLM — CS Hotel Kencana
 
-Prototipe customer service hotel berbasis **sistem multiagen** dengan balasan natural dari LLM (Claude API).
+Prototipe customer service hotel berbasis **sistem multiagen** dengan balasan natural dari LLM (Google Gemini API).
 Tugas Kelompok 5, mata kuliah Agen Cerdas Enterprise, Magister Kecerdasan Artifisial UGM.
 
 ## Fitur
@@ -37,7 +37,7 @@ sistem otomatis memakai aturan kata kunci.
 
 ```
 index.html      Halaman (UI pelanggan + admin, logika agen)
-api/chat.js     Fungsi server Vercel yang memanggil Claude API
+api/chat.js     Fungsi server Vercel yang memanggil Gemini API
 .env.example    Contoh environment variable
 ```
 
@@ -46,8 +46,8 @@ api/chat.js     Fungsi server Vercel yang memanggil Claude API
 1. Buka [vercel.com/new](https://vercel.com/new), impor repo ini dari GitHub.
 2. Framework preset: **Other**. Build command dan output directory dikosongkan.
 3. Di **Environment Variables**, tambahkan:
-   - `ANTHROPIC_API_KEY` = API key dari [console.anthropic.com](https://console.anthropic.com)
-   - `ANTHROPIC_MODEL` (opsional), default `claude-haiku-5-5`
+   - `GEMINI_API_KEY` = API key gratis dari [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+   - `GEMINI_MODEL` (opsional), default `gemini-3.8-flash`
 4. Klik **Deploy**. Setiap push ke branch `main` akan otomatis di-deploy ulang.
 
 ## Menjalankan lokal
@@ -66,3 +66,5 @@ Buka http://localhost:3000. Membuka `index.html` langsung tanpa server juga bisa
   Tampilan pelanggan dan admin harus di tab yang sama.
 - Kamar 102 dan 201 beserta tamu Budi Santoso dan Sari Wulandari adalah data contoh.
 - Pembayaran hanya simulasi.
+- Kuota gratis Gemini terbatas per project. Kalau kuota habis, balasan sementara memakai aturan kata kunci.
+  Data di kuota gratis dapat dipakai Google untuk pengembangan produk, jadi jangan masukkan data pribadi sungguhan.

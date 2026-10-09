@@ -637,7 +637,7 @@ async function invoice(g, handoffFrom){
 }
 const PAY_QUICK = [{label:'Bayar dengan QRIS', payload:'pay:QRIS'}, {label:'Bayar dengan Transfer VA', payload:'pay:Transfer VA'}, {label:'Bayar dengan kartu kredit', payload:'pay:Kartu kredit'}, {label:'Bayar nanti', payload:'pay:later'}];
 
-/* ---------- Mesin LLM (Claude) ---------- */
+/* ---------- Mesin LLM (Gemini via /api/chat) ---------- */
 let sampleFn = null, useLLM = true, llmNote = '';
 // Di luar claude.ai, LLM dipanggil lewat fungsi server /api/chat (API key disimpan di server).
 let serverLLM = /^https?:$/.test(location.protocol) && !/claude\.ai$|claudeusercontent\.com$/.test(location.hostname);
