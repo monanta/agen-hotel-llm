@@ -36,10 +36,27 @@ sistem otomatis memakai aturan kata kunci.
 ## Struktur
 
 ```
-index.html      Halaman (UI pelanggan + admin, logika agen)
-api/chat.js     Fungsi server Vercel yang memanggil Gemini API
-.env.example    Contoh environment variable
+index.html                    Kerangka halaman (HTML saja) dan urutan pemuatan script
+css/style.css                 Tampilan
+js/utils.js                   Fungsi bantu (tanggal, rupiah, teks)
+js/data.js                    "Database": kamar, tamu, eskalasi, log (di memori browser) + data contoh
+js/chat.js                    Mengirim pesan tamu dan menampilkan balasan agen
+js/agents/orkestrator.js      Orkestrator: klasifikasi niat (kata kunci) dan memilih agen
+js/agents/reservasi.js        Agen Reservasi
+js/agents/billing.js          Agen Billing
+js/agents/layanan-kamar.js    Agen Layanan Kamar
+js/agents/concierge.js        Agen Concierge (termasuk FAQ / fakta hotel)
+js/agents/eskalasi.js         Agen Eskalasi
+js/llm.js                     Mesin LLM: menyusun prompt, memvalidasi dan menjalankan aksi dari LLM
+js/ui/pelanggan.js            Tampilan registrasi dan chat
+js/ui/admin.js                Tampilan admin: papan kamar, eskalasi, log
+js/main.js                    Pindah tab dan inisialisasi
+api/chat.js                   Fungsi server Vercel yang memanggil Gemini API
+.env.example                  Contoh environment variable
 ```
+
+Script dimuat sebagai `<script>` biasa (bukan ES module) supaya `index.html` tetap bisa dibuka langsung tanpa server.
+Urutannya di `index.html` penting: file di bawah memakai fungsi dari file di atasnya.
 
 ## Deploy ke Vercel
 
