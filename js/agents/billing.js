@@ -38,5 +38,5 @@ async function pay(g, method){
   // Tandai lunas di "database" kamar
   b.paid = true; b.method = method;
   log('bill', g, `Pembayaran ${b.folio} ${rp(b.total)} via ${method} (simulasi)`);
-  return say(g, 'bill', `Pembayaran ${rp(b.total)} melalui ${method} diterima (simulasi). Folio ${b.folio} sekarang LUNAS.`, {folio:r.no, quick:[{label:'Jam check-in?'}, {label:'Ada antar-jemput bandara?'}]});
+  return say(g, 'bill', `Pembayaran ${rp(b.total)} melalui ${method} diterima (simulasi). Folio ${b.folio} sekarang LUNAS.`, {folio:r.no, quick:[{label:'Check-in mandiri'}, {label:'Jam check-in?'}]});
 }

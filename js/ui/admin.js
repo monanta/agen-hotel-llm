@@ -36,9 +36,11 @@ function renderAdmin(){
         <dt>Masuk</dt><dd>${fmtD(b.in)}</dd>
         <dt>Keluar</dt><dd class="${soon ? 'soon' : ''}">${fmtD(b.out)} · 12.00${soon ? ' (' + soon + ')' : ''}</dd>
         <dt>Folio</dt><dd class="mono">${b.folio}</dd>
-        <dt>Bayar</dt><dd class="${b.paid ? 'paid' : 'unpaid'}">${b.paid ? 'Lunas' : 'Belum lunas'}</dd></dl>`;
+        <dt>Bayar</dt><dd class="${b.paid ? 'paid' : 'unpaid'}">${b.paid ? 'Lunas' : 'Belum lunas'}</dd>
+        ${b.status === 'in' ? `<dt>Pintu</dt><dd class="${b.door === 'open' ? 'unpaid' : 'paid'}">${b.door === 'open' ? 'Terbuka' : 'Terkunci'}</dd>` : ''}</dl>`;
     }
     const escBox = escs.length ? `<div class="tag-esc"><b>${escs.length} eskalasi${escs[0].status==='open' ? ' menunggu' : ''}</b>"${esc(escs[0].question.length > 70 ? escs[0].question.slice(0,70) + '…' : escs[0].question)}"</div>` : '';
+    // Check-in/out normalnya dilakukan tamu sendiri lewat chat; tombol ini cadangan untuk staf
     const act = !b ? '' : b.status === 'booked'
       ? `<button class="ghost" type="button" data-act="in:${r.no}">Check-in</button>`
       : `<button class="ghost" type="button" data-act="out:${r.no}">Check-out</button>`;
@@ -108,10 +110,10 @@ $('#viewAdmin').addEventListener('click', e => {
   // Check-out mengosongkan kamar dan mengirim ucapan terima kasih ke chat tamu.
   if (b.dataset.act){
     const [k, no] = b.dataset.act.split(':'); const r = roomBy(no), g = guests[r.booking.guestId];
-    if (k === 'in'){ r.booking.status = 'in'; log('human', g, `Check-in Kamar ${no} (${r.booking.folio})`); }
+    if (k === 'in'){ r.booking.status = 'in'; r.booking.door = 'locked'; log('human', g, `Check-in Kamar ${no} (${r.booking.folio})`); }
     else {
       log('human', g, `Check-out Kamar ${no} (${r.booking.folio}), kamar kembali tersedia`);
-      g.messages.push({from:'res', text:`Check-out Kamar ${no} sudah tercatat. Terima kasih telah menginap di Hotel Kencana, ${first(g)}.`, time:new Date()});
+      g.messages.push({from:'door', text:`Check-out Kamar ${no} sudah tercatat. Terima kasih telah menginap di Hotel Kencana, ${first(g)}.`, time:new Date()});
       r.booking = null;
     }
     renderAdmin();

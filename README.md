@@ -1,6 +1,6 @@
 # Agen Hotel LLM — CS Hotel Kencana
 
-Prototipe customer service hotel berbasis **sistem multiagen** dengan balasan natural dari LLM (Google Gemini API).
+Prototipe customer service **hotel mandiri (self-service)** berbasis **sistem multiagen** dengan balasan natural dari LLM (Google Gemini API).
 Tugas Kelompok 5, mata kuliah Agen Cerdas Enterprise, Magister Kecerdasan Artifisial UGM.
 
 ## Fitur
@@ -8,10 +8,12 @@ Tugas Kelompok 5, mata kuliah Agen Cerdas Enterprise, Magister Kecerdasan Artifi
 **Sisi pelanggan**
 - Registrasi cukup dengan nama.
 - Chat untuk pemesanan kamar, pembayaran (simulasi), keluhan, dan pertanyaan umum.
+- Check-in dan check-out mandiri, serta buka dan kunci pintu kamar (kunci digital simulasi) langsung dari chat.
 - Setiap balasan diberi label agen yang menjawab, beserta niat dan tingkat keyakinan dari Orkestrator.
 
 **Sisi admin** (akun demo `admin` / `kencana`)
-- Papan 5 kamar: status (Tersedia / Sudah dipesan / Terisi), nama tamu, tanggal masuk dan keluar, status bayar.
+- Papan 5 kamar: status (Tersedia / Sudah dipesan / Terisi), nama tamu, tanggal masuk dan keluar, status bayar, status pintu (terkunci/terbuka).
+  Tombol check-in/check-out di papan kamar adalah cadangan untuk staf.
 - Antrean pertanyaan yang dieskalasi ke manusia. Balasan admin langsung muncul di chat tamu.
 - Log aktivitas agen.
 
@@ -22,13 +24,17 @@ Tugas Kelompok 5, mata kuliah Agen Cerdas Enterprise, Magister Kecerdasan Artifi
 | Orkestrator | Membaca maksud pesan lalu memilih agen |
 | Agen Reservasi | Cek kamar kosong, buat dan batalkan pemesanan |
 | Agen Billing | Tagihan, folio, pembayaran |
+| Agen Akses Kamar | Check-in & check-out mandiri, buka dan kunci pintu |
 | Agen Layanan Kamar | Keluhan dan housekeeping |
 | Agen Concierge | Info hotel dan fasilitas |
 | Agen Eskalasi | Meneruskan kasus ke Front Office Manager (manusia) |
 
 Alurnya: pesan tamu → Orkestrator (LLM) mengembalikan JSON berisi agen, niat, teks balasan, dan **aksi** →
-aksi (pesan kamar, bayar, batal, tiket, eskalasi) divalidasi dan dijalankan oleh kode, bukan oleh LLM.
-Jadi LLM tidak bisa memesan kamar yang sudah terisi atau mengaku sudah menerima bayaran.
+aksi (pesan kamar, bayar, batal, tiket, eskalasi, check-in, check-out, buka/kunci pintu) divalidasi dan dijalankan oleh kode, bukan oleh LLM.
+Jadi LLM tidak bisa memesan kamar yang sudah terisi, mengaku sudah menerima bayaran, atau membuka pintu sebelum tamu check-in.
+
+Syarat check-in mandiri: tagihan lunas, hari ini tanggal check-in, dan sudah pukul 14.00
+(`CHECKIN_HOUR` di `js/agents/akses-kamar.js`; ubah ke `0` untuk demo kapan saja).
 
 Kalau LLM tidak tersedia (API key belum diatur, kuota habis, atau dibuka sebagai file lokal),
 sistem otomatis memakai aturan kata kunci.
@@ -47,6 +53,7 @@ js/agents/billing.js          Agen Billing
 js/agents/layanan-kamar.js    Agen Layanan Kamar
 js/agents/concierge.js        Agen Concierge (termasuk FAQ / fakta hotel)
 js/agents/eskalasi.js         Agen Eskalasi
+js/agents/akses-kamar.js      Agen Akses Kamar (check-in/out mandiri, kunci pintu)
 js/llm.js                     Mesin LLM: menyusun prompt, memvalidasi dan menjalankan aksi dari LLM
 js/ui/pelanggan.js            Tampilan registrasi dan chat
 js/ui/admin.js                Tampilan admin: papan kamar, eskalasi, log

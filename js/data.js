@@ -16,16 +16,19 @@ const AGENTS = {
   care:  {name:'Agen Layanan Kamar',   role:'Keluhan dan permintaan housekeeping'},
   conc:  {name:'Agen Concierge',       role:'Info hotel, fasilitas, dan pertanyaan umum'},
   esc:   {name:'Agen Eskalasi',        role:'Meneruskan kasus ke staf manusia'},
+  door:  {name:'Agen Akses Kamar',     role:'Check-in & check-out mandiri, buka dan kunci pintu'},
   human: {name:'Front Office Manager', role:'Staf manusia yang menjawab eskalasi'},
 };
 // Urutan tampil agen di panel/log admin
-const ORDER = ['orch','res','bill','care','conc','esc','human'];
+const ORDER = ['orch','res','bill','door','care','conc','esc','human'];
 
 /* ---------- Data ---------- */
 // "Tabel" kamar. booking = null berarti kamar kosong.
 // Kalau dipesan, booking berisi:
-//   {folio, guestId, in, out, nights, status:'booked'|'in', paid, method, total}
+//   {folio, guestId, in, out, nights, status:'booked'|'in', paid, method, total, door}
 //   status 'booked' = sudah dipesan, 'in' = tamu sudah check-in
+//   door   'locked' = pintu terkunci, 'open' = terbuka (hanya berarti setelah check-in;
+//          kosong dianggap terkunci)
 const rooms = [
   {no:'101', type:'Deluxe King',    price:650000,  booking:null},
   {no:'102', type:'Deluxe Twin',    price:650000,  booking:null},

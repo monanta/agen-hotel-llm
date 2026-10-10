@@ -19,6 +19,12 @@ const INTENTS = [
   {key:'complaint', agent:'care', label:'keluhan',           kw:['komplain','keluhan','rusak','kotor','bocor','berisik','bising','tidak berfungsi','tidak menyala','mati','bau','kecewa','lambat','handuk','bantal','selimut','sabun','air panas','tidak keluar','kecoa','semut','ac','tv','lampu','toilet','kloset','wastafel']},
   {key:'book',      agent:'res',  label:'pemesanan kamar',   kw:['pesan kamar','memesan','pesan','booking','book','reservasi','menginap','nginap','kamar kosong','kamar tersedia','ketersediaan','sewa kamar','cari kamar','mau kamar']},
   {key:'price',     agent:'res',  label:'tarif kamar',       kw:['harga','tarif','per malam','biaya kamar','tipe kamar','jenis kamar']},
+  // Akses kamar mandiri. Diletakkan sebelum 'faq' supaya "check-in" (perintah) menang
+  // atas FAQ jam check-in saat skornya sama; pertanyaan "jam check-in?" dibelokkan ke FAQ di handle().
+  {key:'unlock',    agent:'door', label:'buka pintu',        kw:['buka pintu','bukakan pintu','bukain pintu','buka kamar','buka kunci','unlock']},
+  {key:'lock',      agent:'door', label:'kunci pintu',       kw:['kunci pintu','kunci kamar','kuncikan','tutup pintu','lock']},
+  {key:'checkin',   agent:'door', label:'check-in mandiri',  kw:['check in','checkin','cek in']},
+  {key:'checkout',  agent:'door', label:'check-out mandiri', kw:['check out','checkout','cek out','keluar kamar']},
   {key:'faq',       agent:'conc', label:'informasi hotel',   kw:FAQ.flatMap(f => f.kw)},   // semua kata kunci FAQ di concierge.js
   {key:'greet',     agent:'conc', label:'sapaan',            kw:['halo','hallo','hai','hi','selamat pagi','selamat siang','selamat sore','selamat malam','permisi','assalamualaikum','terima kasih','makasih','thanks','thank you']},
 ];
@@ -79,7 +85,12 @@ async function handle(g, text, payload){
   // Pesan dari tombol cepat membawa payload, langsung diproses tanpa klasifikasi
   if (payload) return handlePayload(g, payload, text);
 
-  const c = classify(text);
+  let c = classify(text);
+  // "Jam check-in berapa?" atau "boleh late check-out?" adalah pertanyaan info (Concierge),
+  // bukan perintah check-in/check-out
+  if ((c.key === 'checkin' || c.key === 'checkout') && / (jam|kapan|pukul|berapa|early|late) /.test(c.n)){
+    c = {...c, key:'faq', agent:'conc', label:'informasi hotel'};
+  }
 
   // Alur pemesanan yang sedang berjalan
   // Jika Agen Reservasi sedang menanyakan tanggal/malam/kamar, jawaban tamu
@@ -117,6 +128,10 @@ async function handle(g, text, payload){
     case 'price':     return priceList(g);             // Agen Reservasi
     case 'faq':       return faq(g, c.n);              // Agen Concierge
     case 'greet':     return greet(g, c.n);            // Agen Concierge
+    case 'checkin':   return selfCheckin(g);           // Agen Akses Kamar
+    case 'checkout':  return selfCheckout(g);          // Agen Akses Kamar
+    case 'unlock':    return door(g, true);            // Agen Akses Kamar
+    case 'lock':      return door(g, false);           // Agen Akses Kamar
     default:          return escalate(g, text, 'Di luar kemampuan agen', 'orch');   // tidak dikenali → manusia
   }
 }
